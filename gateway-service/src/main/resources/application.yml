@@ -1,0 +1,56 @@
+server:
+  port: 8080
+  
+spring:
+  application:
+    name: gateway-services
+  cloud:
+    gateway:
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins: 'http://localhost:4200'
+            allowedHeaders:
+              - Content-Type
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE         
+      routes:
+      - id: service-usuarios
+        uri: lb://service-usuarios
+        predicates:
+        - Path=/api/alumno/**
+        filters:
+        - StripPrefix=2
+                
+      - id: service-cursos
+        uri: lb://service-cursos
+        predicates:
+        - Path=/api/curso/**
+        filters:
+        - StripPrefix=2
+        
+      - id: service-examenes
+        uri: lb://service-examenes
+        predicates:
+        - Path=/api/examenes/**
+        filters:
+        - StripPrefix=2
+        
+      - id: service-respuestas
+        uri: lb://service-respuestas
+        predicates:
+        - Path=/api/respuesta/**
+        filters:
+        - StripPrefix=2
+    
+eureka:
+  instance:
+    instanceId: ${spring.application.name}:${random.value}
+    prefer-ip-address: true
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+    register-with-eureka: true
